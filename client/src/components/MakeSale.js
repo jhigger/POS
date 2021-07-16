@@ -87,7 +87,7 @@ export default function CustomizedTables(props) {
 
 	React.useEffect(() => {
 		apis
-			.getAllItems()
+			.getAllInStock()
 			.then((items) => {
 				setRows(items.data);
 			})
