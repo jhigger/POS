@@ -6,7 +6,7 @@
 
 > yarn add / npm install
 
-> yarn start / npm start
+> yarn start / npm run start
 
 ### Second Terminal
 
