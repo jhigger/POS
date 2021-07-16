@@ -142,11 +142,15 @@ export default function CustomizedTables(props) {
 				apis.insertSale(payload).catch((error) => {
 					console.log(error);
 				});
-			});
 
-			setCart([]);
-			setTotal(0);
-			setPayment(0);
+				const update = {
+					quantity: item.quantity - 1
+				};
+
+				apis.updateItemById(item.item_id, update).catch((error) => {
+					console.log(error);
+				});
+			});
 		}
 	};
 
@@ -309,6 +313,11 @@ export default function CustomizedTables(props) {
 							</Button>
 						)}
 						content={() => componentRef.current}
+						onAfterPrint={() => {
+							setCart([]);
+							setTotal(0);
+							setPayment(0);
+						}}
 					/>
 				</form>
 			</Box>
