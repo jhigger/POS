@@ -252,20 +252,32 @@ export default function Inventory() {
 	const [selected, setSelected] = React.useState([]);
 	const [page, setPage] = React.useState(0);
 	const [dense, setDense] = React.useState(false);
+	const [unavailable, setUnavailable] = React.useState(false);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
 	const [rows, setRows] = React.useState([]);
 	const [refresh, setRefresh] = React.useState(true);
 
 	React.useEffect(() => {
-		apis
-			.getAllItems()
-			.then((items) => {
-				setRows(items.data);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	}, [refresh]);
+		if (unavailable) {
+			apis
+				.getAllOutOfStock()
+				.then((items) => {
+					setRows(items.data);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		} else {
+			apis
+				.getAllItems()
+				.then((items) => {
+					setRows(items.data);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+		}
+	}, [refresh, unavailable]);
 
 	const handleUnselect = () => {
 		setSelected([]);
@@ -321,6 +333,10 @@ export default function Inventory() {
 
 	const handleChangeDense = (event) => {
 		setDense(event.target.checked);
+	};
+
+	const handleUnavailable = (event) => {
+		setUnavailable(event.target.checked);
 	};
 
 	const isSelected = (item_id) => selected.indexOf(item_id) !== -1;
@@ -414,6 +430,10 @@ export default function Inventory() {
 			<FormControlLabel
 				control={<Switch checked={dense} onChange={handleChangeDense} />}
 				label="Dense padding"
+			/>
+			<FormControlLabel
+				control={<Switch checked={unavailable} onChange={handleUnavailable} />}
+				label="Show out of stock only"
 			/>
 			<UpdateItemButton items={rows} toggleRefresh={toggleRefresh} />
 			<CreateItemButton toggleRefresh={toggleRefresh} />

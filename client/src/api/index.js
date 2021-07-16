@@ -4,6 +4,7 @@ const api = axios.create(require('./config.json'));
 // Item API
 export const insertItem = (payload) => api.post(`/item`, payload);
 export const getAllItems = () => api.get(`/items`);
+export const getAllOutOfStock = () => api.get(`/items/unavailable`);
 export const updateItemById = (id, payload) => api.put(`/item/${id}`, payload);
 export const deleteItemById = (id) => api.delete(`/item/${id}`);
 export const getItemById = (id) => api.get(`/item/${id}`);
@@ -25,6 +26,7 @@ export const getUserByUsername = (username) => api.get(`/user/u/${username}`);
 const apis = {
 	insertItem,
 	getAllItems,
+	getAllOutOfStock,
 	updateItemById,
 	deleteItemById,
 	getItemById,
