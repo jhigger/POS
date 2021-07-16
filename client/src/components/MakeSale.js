@@ -231,8 +231,8 @@ export default function CustomizedTables(props) {
 					</Table>
 				</TableContainer>
 			</Box>
-			<Box className={classes.rightSide} ref={componentRef}>
-				<Paper className={classes.receipt}>
+			<Box className={classes.rightSide}>
+				<Paper className={classes.receipt} ref={componentRef}>
 					<Typography variant="overline" align="center">
 						TechShack
 					</Typography>
