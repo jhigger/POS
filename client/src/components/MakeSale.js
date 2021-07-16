@@ -15,6 +15,7 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import apis from '../api';
 import {Box, Typography} from '@material-ui/core';
+import ReactToPrint from 'react-to-print';
 
 const StyledTableCell = withStyles((theme) => ({
 	head: {
@@ -82,6 +83,8 @@ export default function CustomizedTables(props) {
 
 	const {date, username} = props;
 
+	const componentRef = React.useRef();
+
 	React.useEffect(() => {
 		apis
 			.getAllItems()
@@ -126,6 +129,7 @@ export default function CustomizedTables(props) {
 
 	const handlePay = (event) => {
 		event.preventDefault();
+
 		if (payment >= total) {
 			cart.forEach((item) => {
 				const payload = {
@@ -227,7 +231,7 @@ export default function CustomizedTables(props) {
 					</Table>
 				</TableContainer>
 			</Box>
-			<Box className={classes.rightSide}>
+			<Box className={classes.rightSide} ref={componentRef}>
 				<Paper className={classes.receipt}>
 					<Typography variant="overline" align="center">
 						TechShack
@@ -292,15 +296,20 @@ export default function CustomizedTables(props) {
 						value={payment}
 						onChange={(event) => setPayment(event.target.value)}
 					/>
-					<Button
-						className={classes.button}
-						variant="contained"
-						color="primary"
-						type="submit"
-						disabled={payment >= total && payment !== 0 ? false : true}
-					>
-						Pay
-					</Button>
+					<ReactToPrint
+						trigger={() => (
+							<Button
+								className={classes.button}
+								variant="contained"
+								color="primary"
+								type="submit"
+								disabled={payment >= total && payment !== 0 ? false : true}
+							>
+								Pay
+							</Button>
+						)}
+						content={() => componentRef.current}
+					/>
 				</form>
 			</Box>
 		</main>
