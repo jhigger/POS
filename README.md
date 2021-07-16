@@ -4,7 +4,7 @@
 
 > cd client
 
-> yarn add / npm install
+> yarn install / npm install
 
 > yarn start / npm run start
 
@@ -12,7 +12,7 @@
 
 > cd server
 
-> yarn add / npm install
+> yarn install / npm install
 
 > yarn dev / npm dev
 
