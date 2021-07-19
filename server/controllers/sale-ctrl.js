@@ -14,6 +14,7 @@ exports.create = (req, res) => {
 
 	// Create an Sale
 	const sale = {
+		receipt_no: req.body.receipt_no,
 		cashier: req.body.cashier,
 		item: req.body.item,
 		quantity: req.body.quantity,
@@ -125,6 +126,19 @@ exports.deleteAll = (req, res) => {
 		.catch((err) => {
 			res.status(500).send({
 				message: err.message || 'Some error occurred while removing all sales.'
+			});
+		});
+};
+
+// Find last receipt number
+exports.findLastReceiptNumber = (req, res) => {
+	Sale.max('receipt_no')
+		.then((max) => {
+			res.send(JSON.stringify({max: max}));
+		})
+		.catch((err) => {
+			res.status(500).send({
+				message: err.message || 'Some error occurred while retrieving sales.'
 			});
 		});
 };

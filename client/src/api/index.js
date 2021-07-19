@@ -15,6 +15,7 @@ export const getAllSales = () => api.get(`/sales`);
 export const updateSaleById = (id, payload) => api.put(`/sale/${id}`, payload);
 export const deleteSaleById = (id) => api.delete(`/sale/${id}`);
 export const getSaleById = (id) => api.get(`/sale/${id}`);
+export const getLastReceiptNumber = () => api.get(`/sales/lastReceiptNumber`);
 // User API
 export const insertUser = (payload) => api.post(`/register`, payload);
 export const logUserIn = (payload) => api.post(`/login`, payload);
@@ -37,6 +38,7 @@ const apis = {
 	updateSaleById,
 	deleteSaleById,
 	getSaleById,
+	getLastReceiptNumber,
 	insertUser,
 	logUserIn,
 	getAllUsers,

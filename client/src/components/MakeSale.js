@@ -81,6 +81,7 @@ export default function CustomizedTables(props) {
 	const [newItem, setNewItem] = React.useState({});
 	const [total, setTotal] = React.useState(0);
 	const [payment, setPayment] = React.useState(0);
+	const [receipt, setReceipt] = React.useState(0);
 
 	const {date, username} = props;
 
@@ -95,6 +96,19 @@ export default function CustomizedTables(props) {
 			.getAllInStock()
 			.then((items) => {
 				setRows(items.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+
+		apis
+			.getLastReceiptNumber()
+			.then((data) => {
+				if (data.data.max === null) {
+					setReceipt(1000);
+				} else {
+					setReceipt(data.data.max + 1);
+				}
 			})
 			.catch((error) => {
 				console.log(error);
@@ -135,7 +149,6 @@ export default function CustomizedTables(props) {
 
 	const handleSubtotal = () => {
 		const prices = cart.map((item) => item.price * item.quantity);
-		console.log(prices);
 		const subtotal = prices.reduce((acc, val) => acc + val, 0);
 		setTotal(subtotal);
 	};
@@ -146,6 +159,7 @@ export default function CustomizedTables(props) {
 		if (payment >= total) {
 			cart.forEach((item) => {
 				const payload = {
+					receipt_no: receipt,
 					cashier: username,
 					item: item.item_description,
 					quantity: item.quantity,
@@ -156,8 +170,12 @@ export default function CustomizedTables(props) {
 					console.log(error);
 				});
 
+				const ids = rows.map((row) => row.item_id);
+				const index = ids.indexOf(item.item_id);
+				const quantity = rows[index].quantity;
+
 				const update = {
-					quantity: item.quantity - 1
+					quantity: quantity - 1
 				};
 
 				apis.updateItemById(item.item_id, update).catch((error) => {
@@ -184,6 +202,7 @@ export default function CustomizedTables(props) {
 					<Autocomplete
 						options={rows}
 						getOptionLabel={(option) => option.item_description}
+						getOptionSelected={(option, value) => option.value === value.value}
 						style={{width: 300}}
 						className={classes.field}
 						onChange={(event, value) => setNewItem(value)}
@@ -261,7 +280,7 @@ export default function CustomizedTables(props) {
 						<img src={logo} alt="logo" />
 					</Box>
 					<Typography variant="overline" align="center">
-						Receipt
+						Receipt {receipt}
 					</Typography>
 					<Typography variant="overline" align="center">
 						date: {date.toLocaleDateString()}
