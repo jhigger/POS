@@ -15,6 +15,7 @@ import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import apis from '../api';
 import {Box, Typography} from '@material-ui/core';
+import logo from '../logo.png';
 import ReactToPrint from 'react-to-print';
 
 const StyledTableCell = withStyles((theme) => ({
@@ -86,6 +87,10 @@ export default function CustomizedTables(props) {
 	const componentRef = React.useRef();
 
 	React.useEffect(() => {
+		handleRefresh();
+	}, []);
+
+	const handleRefresh = () => {
 		apis
 			.getAllInStock()
 			.then((items) => {
@@ -94,10 +99,14 @@ export default function CustomizedTables(props) {
 			.catch((error) => {
 				console.log(error);
 			});
-	}, []);
+	};
 
 	const handleAdd = (index) => {
-		cart[index].quantity++;
+		const rowIndex = rows.indexOf(newItem);
+
+		if (rows[rowIndex].quantity > cart[index].quantity) {
+			cart[index].quantity++;
+		}
 		handleSubtotal();
 	};
 
@@ -111,19 +120,23 @@ export default function CustomizedTables(props) {
 
 	const handleSubmit = (event) => {
 		event.preventDefault();
-		if (cart.includes(newItem)) {
-			const index = cart.indexOf(newItem);
+		const ids = cart.map((item) => item.item_id);
+
+		if (ids.includes(newItem.item_id)) {
+			const index = ids.indexOf(newItem.item_id);
 			handleAdd(index);
 		} else {
-			newItem.quantity = 1;
-			cart.push(newItem);
+			const item = JSON.parse(JSON.stringify(newItem));
+			item.quantity = 1;
+			cart.push(item);
 		}
 		handleSubtotal();
 	};
 
 	const handleSubtotal = () => {
 		const prices = cart.map((item) => item.price * item.quantity);
-		const subtotal = prices.reduce((acc, val) => acc + val);
+		console.log(prices);
+		const subtotal = prices.reduce((acc, val) => acc + val, 0);
 		setTotal(subtotal);
 	};
 
@@ -152,6 +165,13 @@ export default function CustomizedTables(props) {
 				});
 			});
 		}
+	};
+
+	const handleAfterPrint = () => {
+		setCart([]);
+		setTotal(0);
+		setPayment(0);
+		handleRefresh();
 	};
 
 	return (
@@ -237,9 +257,9 @@ export default function CustomizedTables(props) {
 			</Box>
 			<Box className={classes.rightSide}>
 				<Paper className={classes.receipt} ref={componentRef}>
-					<Typography variant="overline" align="center">
-						TechShack
-					</Typography>
+					<Box align="center">
+						<img src={logo} alt="logo" />
+					</Box>
 					<Typography variant="overline" align="center">
 						Receipt
 					</Typography>
@@ -309,15 +329,11 @@ export default function CustomizedTables(props) {
 								type="submit"
 								disabled={payment >= total && payment !== 0 ? false : true}
 							>
-								Pay
+								Checkout
 							</Button>
 						)}
 						content={() => componentRef.current}
-						onAfterPrint={() => {
-							setCart([]);
-							setTotal(0);
-							setPayment(0);
-						}}
+						onAfterPrint={handleAfterPrint}
 					/>
 				</form>
 			</Box>
