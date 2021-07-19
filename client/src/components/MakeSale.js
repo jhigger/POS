@@ -82,6 +82,7 @@ export default function CustomizedTables(props) {
 	const [total, setTotal] = React.useState(0);
 	const [payment, setPayment] = React.useState(0);
 	const [receipt, setReceipt] = React.useState(0);
+	const [checkout, setCheckout] = React.useState(false);
 
 	const {date, username} = props;
 
@@ -189,6 +190,7 @@ export default function CustomizedTables(props) {
 		setCart([]);
 		setTotal(0);
 		setPayment(0);
+		setCheckout(!checkout);
 		handleRefresh();
 	};
 
@@ -200,6 +202,7 @@ export default function CustomizedTables(props) {
 					onSubmit={(event) => handleSubmit(event)}
 				>
 					<Autocomplete
+						key={checkout}
 						options={rows}
 						getOptionLabel={(option) => option.item_description}
 						getOptionSelected={(option, value) => option.value === value.value}
