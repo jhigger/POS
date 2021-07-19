@@ -164,7 +164,8 @@ export default function CustomizedTables(props) {
 					cashier: username,
 					item: item.item_description,
 					quantity: item.quantity,
-					price: item.price
+					price: item.price,
+					payment: payment
 				};
 
 				apis.insertSale(payload).catch((error) => {

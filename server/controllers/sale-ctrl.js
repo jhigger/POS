@@ -18,7 +18,8 @@ exports.create = (req, res) => {
 		cashier: req.body.cashier,
 		item: req.body.item,
 		quantity: req.body.quantity,
-		price: req.body.price
+		price: req.body.price,
+		payment: req.body.payment
 	};
 
 	// Save Sale in the database
