@@ -350,7 +350,7 @@ export default function CustomizedTables(props) {
 								variant="contained"
 								color="primary"
 								type="submit"
-								disabled={payment >= total && payment !== 0 && total === 0}
+								disabled={payment < total || total === 0}
 							>
 								Checkout
 							</Button>
