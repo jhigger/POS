@@ -209,7 +209,7 @@ export default function CustomizedTables(props) {
 						getOptionSelected={(option, value) => option.value === value.value}
 						style={{width: 300}}
 						className={classes.field}
-						onChange={(event, value) => setNewItem(value)}
+						onChange={(event, value) => setNewItem(value !== null ? value : '')}
 						classes={{
 							option: classes.option
 						}}

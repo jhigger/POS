@@ -24,6 +24,10 @@ import DeleteItemButton from './DeleteItemButton';
 import UpdateItemButton from './UpdateItemButton';
 import CreateItemButton from './CreateItemButton';
 import Snackbar from '@material-ui/core/Snackbar';
+import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
 
 function descendingComparator(a, b, orderBy) {
 	if (b[orderBy] < a[orderBy]) {
@@ -147,12 +151,35 @@ const useToolbarStyles = makeStyles((theme) => ({
 			  },
 	title: {
 		flex: '1 1 100%'
+	},
+	search: {
+		flex: '1 1 100%'
+	},
+	button: {
+		margin: theme.spacing(0, 0, 0, 1)
+	},
+	form: {
+		display: 'flex',
+		flexDirection: 'row',
+		margin: theme.spacing(1, 0)
+	},
+	field: {
+		flexGrow: 1
 	}
 }));
 
 const EnhancedTableToolbar = (props) => {
 	const classes = useToolbarStyles();
-	const {numSelected, toggleRefresh, selected, handleUnselect} = props;
+	const {
+		numSelected,
+		toggleRefresh,
+		selected,
+		handleUnselect,
+		options,
+		query,
+		setQuery,
+		handleSubmit
+	} = props;
 
 	const [openToast, setOpenToast] = React.useState(false);
 
@@ -180,14 +207,61 @@ const EnhancedTableToolbar = (props) => {
 					{numSelected} selected
 				</Typography>
 			) : (
-				<Typography
-					className={classes.title}
-					variant="h6"
-					id="tableTitle"
-					component="div"
-				>
-					Items
-				</Typography>
+				<>
+					<Typography
+						className={classes.title}
+						variant="h6"
+						id="tableTitle"
+						component="div"
+					>
+						Items
+					</Typography>
+					<Box className={classes.search} variant="h6" component="div">
+						<form
+							className={classes.form}
+							onSubmit={(event) => handleSubmit(event)}
+						>
+							<Autocomplete
+								options={options}
+								getOptionLabel={(option) => option.item_description}
+								getOptionSelected={(option, value) =>
+									option.value === value.value
+								}
+								style={{width: 300}}
+								className={classes.field}
+								onChange={(event, value) => {
+									if (value === null) {
+										setQuery('');
+										toggleRefresh();
+									} else setQuery(value);
+								}}
+								classes={{
+									option: classes.option
+								}}
+								renderOption={(option) => (
+									<React.Fragment>
+										<span>({option.item_id})</span>
+										{option.item_description}
+									</React.Fragment>
+								)}
+								renderInput={(params) => (
+									<TextField {...params} label="Products" variant="outlined" />
+								)}
+								size="small"
+							/>
+							<Button
+								className={classes.button}
+								variant="contained"
+								color="primary"
+								type="submit"
+								disabled={Object.keys(query).length === 0}
+								size="small"
+							>
+								Search
+							</Button>
+						</form>
+					</Box>
+				</>
 			)}
 
 			{numSelected > 0 ? (
@@ -255,7 +329,9 @@ export default function Inventory() {
 	const [unavailable, setUnavailable] = React.useState(false);
 	const [rowsPerPage, setRowsPerPage] = React.useState(5);
 	const [rows, setRows] = React.useState([]);
+	const [options, setOptions] = React.useState([]);
 	const [refresh, setRefresh] = React.useState(true);
+	const [query, setQuery] = React.useState({});
 
 	React.useEffect(() => {
 		if (unavailable) {
@@ -272,6 +348,7 @@ export default function Inventory() {
 				.getAllItems()
 				.then((items) => {
 					setRows(items.data);
+					setOptions(items.data);
 				})
 				.catch((error) => {
 					console.log(error);
@@ -339,6 +416,11 @@ export default function Inventory() {
 		setUnavailable(event.target.checked);
 	};
 
+	const handleSubmit = (event) => {
+		event.preventDefault();
+		setRows([query]);
+	};
+
 	const isSelected = (item_id) => selected.indexOf(item_id) !== -1;
 
 	const emptyRows =
@@ -352,6 +434,10 @@ export default function Inventory() {
 					toggleRefresh={toggleRefresh}
 					selected={selected}
 					handleUnselect={handleUnselect}
+					options={options}
+					query={query}
+					setQuery={setQuery}
+					handleSubmit={handleSubmit}
 				/>
 				<TableContainer>
 					<Table
@@ -435,7 +521,7 @@ export default function Inventory() {
 				control={<Switch checked={unavailable} onChange={handleUnavailable} />}
 				label="Show out of stock only"
 			/>
-			<UpdateItemButton items={rows} toggleRefresh={toggleRefresh} />
+			<UpdateItemButton items={options} toggleRefresh={toggleRefresh} />
 			<CreateItemButton toggleRefresh={toggleRefresh} />
 		</div>
 	);
