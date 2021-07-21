@@ -19,9 +19,9 @@ function App() {
 		[mode]
 	);
 
-	const [loggedIn, setLoggedIn] = React.useState(true);
-	const [username, setUsername] = React.useState('admin');
-	const [position, setPosition] = React.useState('admin');
+	const [loggedIn, setLoggedIn] = React.useState(false);
+	const [username, setUsername] = React.useState('');
+	const [position, setPosition] = React.useState('');
 
 	return (
 		<ThemeProvider theme={theme}>
